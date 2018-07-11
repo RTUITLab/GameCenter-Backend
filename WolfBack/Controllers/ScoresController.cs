@@ -57,7 +57,7 @@ namespace WolfBack.Controllers
         [Route("{gameType}")]
         public async Task<IActionResult> GetScore(string gameType)
         {
-            if (await dbContext.GameTypes.FindAsync(gameType) == null)
+            if (!await dbContext.GameTypes.AnyAsync(t => t.GameName == gameType))
             {
                 return BadRequest();
             }
