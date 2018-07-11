@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  wolfback:
+    image: ${DOCKER_REGISTRY}wolfback
+    build:
+      context: .
+      dockerfile: WolfBack/Dockerfile
