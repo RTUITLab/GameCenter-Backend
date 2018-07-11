@@ -76,16 +76,3 @@ namespace WolfBack.Controllers
         }
     }
 }
-
-//var path = System.IO.Path.Combine(env.ContentRootPath, "AppData/ScoreTable.txt");
-//var nowScores = System.IO.File.ReadAllText(path)
-//    .Split('&', StringSplitOptions.RemoveEmptyEntries)
-//    .DefaultIfEmpty("0")
-//    .Select(S => int.Parse(S))
-//    .ToList();
-//nowScores.Add(score);
-//nowScores.Sort();
-//nowScores.Reverse();
-//var result = string.Join("&", nowScores.Take(5));
-//System.IO.File.WriteAllText(path, result);
-//return result;

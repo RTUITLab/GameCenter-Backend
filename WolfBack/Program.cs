@@ -19,6 +19,7 @@ namespace WolfBack
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(config => config.AddJsonFile("appsettings.secret.json", false))
                 .UseStartup<Startup>()
                 .Build();
     }
