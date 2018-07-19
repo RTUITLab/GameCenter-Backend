@@ -6,7 +6,7 @@ namespace Models
 {
     public class Score
     {
-        public Guid Id { get; set; }
+        public Guid ScoreId { get; set; }
         public Guid PlayerId { get; set; }
         public Guid GameTypeId { get; set; }
         public Player PlayerName { get; set; }

@@ -5,8 +5,10 @@ namespace Models
 {
     public class Player
     {
-        public Guid Id { get; set; }
+        public Guid PlayerId { get; set; }
         public string Username { get; set; }
+        public string VKId { get; set; }
         public List<Score> Scores { get; set; }
+        public PlayerStatus Status { get; set; }
     }
 }

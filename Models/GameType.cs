@@ -6,8 +6,9 @@ namespace Models
 {
     public class GameType
     {
-        public Guid Id { get; set; }
+        public Guid GameTypeId { get; set; }
         public string GameName { get; set; }
         public List<Score> Scores { get; set; }
+        public GameState State { get; set; }
     }
 }

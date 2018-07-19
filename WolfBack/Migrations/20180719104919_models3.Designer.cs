@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models;
 
 namespace WolfBack.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180719104919_models3")]
+    partial class models3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,37 +23,33 @@ namespace WolfBack.Migrations
 
             modelBuilder.Entity("Models.GameType", b =>
                 {
-                    b.Property<Guid>("GameTypeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("GameName");
 
                     b.Property<int>("State");
 
-                    b.HasKey("GameTypeId");
+                    b.HasKey("Id");
 
                     b.ToTable("GameTypes");
                 });
 
             modelBuilder.Entity("Models.Player", b =>
                 {
-                    b.Property<Guid>("PlayerId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<int>("Status");
 
                     b.Property<string>("Username");
 
-                    b.Property<string>("VKId");
-
-                    b.HasKey("PlayerId");
+                    b.HasKey("Id");
 
                     b.ToTable("Players");
                 });
 
             modelBuilder.Entity("Models.Score", b =>
                 {
-                    b.Property<Guid>("ScoreId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("GameTypeId");
@@ -60,7 +58,7 @@ namespace WolfBack.Migrations
 
                     b.Property<int>("ScoreCount");
 
-                    b.HasKey("ScoreId");
+                    b.HasKey("Id");
 
                     b.HasIndex("GameTypeId");
 

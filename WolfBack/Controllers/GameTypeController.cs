@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.Requests;
 
 namespace WolfBack.Controllers
 {
@@ -40,17 +41,54 @@ namespace WolfBack.Controllers
             return Ok();
         }
 
-        // Получение всех типов игр, хранящихся в таблице 
+        //Получение всех типов игр, хранящихся в таблице 
         [HttpGet]
         public IActionResult GetAllTypes()
         {
             var result = dbContext.GameTypes.Select(t => new
             {
                 Name = t.GameName,
-                GameTypeId = t.Id
+                GameId = t.GameTypeId
             });
 
             return Json(result);
+        }
+
+        //Удаление игры
+        [HttpDelete]
+        [Route("delete/{gameType}")]
+        public async Task<IActionResult> DeleteGame(string gameType)
+        {
+            if (!dbContext.GameTypes.Any(t => t.GameName == gameType))
+            {
+                return NotFound();
+            }
+
+            var del = dbContext.GameTypes.FirstOrDefault(t => t.GameName == gameType);
+            dbContext.GameTypes.Remove(del);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        //Переименование игр
+        [HttpPut]
+        [Route("rename/{gameType}")]
+        public async Task<IActionResult> Rename(string gameType, [FromBody]GameTypeEdit editRequest)
+        {
+            if (!dbContext.GameTypes.Any(t => t.GameName == gameType))
+            {
+                NotFound();
+            }
+
+            var result = dbContext.GameTypes.FirstOrDefault(t => t.GameName == gameType);
+
+            if (editRequest.GameName != null)
+            {
+                result.GameName = editRequest.GameName;
+            }
+
+            await dbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }
