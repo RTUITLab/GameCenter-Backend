@@ -120,5 +120,23 @@ namespace WolfBack.Controllers
             }
             return Ok();
         }
+
+        //Получение выбранных игр
+        [HttpGet]
+        [Route("selected")]
+        public IActionResult GetSelectedGames()
+        {
+            return Json(dbContext
+                .GameTypes
+                .Where(t => t.State == GameState.Selected)
+                .Select(t => new
+                {
+                    t.GameName,
+                    t.GameTypeId,
+#if DEBUG
+                    State = t.State.ToString()
+#endif
+                }));
+        }
     }
 }
