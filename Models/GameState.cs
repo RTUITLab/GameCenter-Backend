@@ -6,7 +6,7 @@ namespace Models
 {
     public enum GameState
     {
-        Selected,
-        NotSelected
+        NotSelected,
+        Selected
     }
 }

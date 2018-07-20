@@ -32,7 +32,8 @@ namespace WolfBack.Controllers
 
             GameType type = new GameType
             {
-                GameName = gameType
+                GameName = gameType,
+                State = GameState.NotSelected
             };
 
             await dbContext.GameTypes.AddAsync(type);
@@ -48,7 +49,8 @@ namespace WolfBack.Controllers
             var result = dbContext.GameTypes.Select(t => new
             {
                 Name = t.GameName,
-                GameId = t.GameTypeId
+                GameId = t.GameTypeId,
+                State = t.State.ToString()
             });
 
             return Json(result);
@@ -88,6 +90,34 @@ namespace WolfBack.Controllers
             }
 
             await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        //Выбор показываемых на стендах игр
+        [HttpPut]
+        [Route("pickgames")]
+        public async Task<IActionResult> PickGame([FromBody]List<Guid> pickRequest)
+        {
+            foreach (var gameID in pickRequest)
+            {
+                var result = await dbContext.GameTypes.FindAsync(gameID);
+                result.State = GameState.Selected;
+                await dbContext.SaveChangesAsync();
+            }
+            return Ok();
+        }
+
+        //Отмена выбора показывавемых на стендах игр
+        [HttpPut]
+        [Route("unpickgames")]
+        public async Task<IActionResult> UnpickGames([FromBody]List<Guid> unpickRequest)
+        {
+            foreach (var gameID in unpickRequest)
+            {
+                var result = await dbContext.GameTypes.FindAsync(gameID);
+                result.State = GameState.NotSelected;
+                await dbContext.SaveChangesAsync();
+            }
             return Ok();
         }
     }

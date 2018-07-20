@@ -8,9 +8,6 @@ namespace WolfBack.SignalR
 {
     public class ChatHub : Hub
     {
-        public async Task Send()
-        {
-           
-        }
+        
     }
 }
