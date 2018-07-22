@@ -35,6 +35,7 @@ namespace WolfBack
                 options.UseSqlServer(Configuration.GetConnectionString("WolfDB"),
                 b => b.MigrationsAssembly("WolfBack")));
 #endif
+            services.AddCors();
             services.AddMvc();
             services.AddSignalR();
         }
@@ -46,7 +47,11 @@ namespace WolfBack
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors(config =>
+                config.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin()
+                    .AllowCredentials());
             app.UseMvc();
             app.UseSignalR(routes => 
                 routes.MapHub<ChatHub>("/chathub")
