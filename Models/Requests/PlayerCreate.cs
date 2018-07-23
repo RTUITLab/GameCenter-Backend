@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Models.ModelViews
 {
-    public class PlayerModelView
+    public class PlayerCreate
     {
         public string Username { get; set; }
         public string VKId { get; set; }
-        public GameType GameName { get; set; }
+        public string GameName { get; set; }
     }
 }

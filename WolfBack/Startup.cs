@@ -52,5 +52,7 @@ namespace WolfBack
                 routes.MapHub<ChatHub>("/chathub")
             );
         }
+
+
     }
 }

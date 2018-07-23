@@ -12,5 +12,6 @@ namespace Models
         public Player PlayerName { get; set; }
         public GameType GameType { get; set; }
         public int ScoreCount { get; set; }
+        public DateTime Time { get; set; }
     }
 }

@@ -24,37 +24,39 @@ namespace WolfBack.Controllers
         }
 
         //Добавление нового игрока в таблицу
-        [HttpPost]
-        [Route("{username}/{gameType}/{score}")]
-        public async Task<IActionResult> PostScore(string username, int score, string gameType)
-        {
-            if (await dbContext.Scores
-                .Where(s => s.GameType.GameName == gameType)
-                .Where(s => s.PlayerName.Username == username)
-                .AnyAsync())
-            {
-                return BadRequest();
-            }
+        //[HttpPost]
+        //[Route("{username}/{gameType}/{score}")]
+        //public async Task<IActionResult> PostScore(string username, int score, string gameType)
+        //{
+        //    if (await dbContext.Scores
+        //        .Where(s => s.GameType.GameName == gameType)
+        //        .Where(s => s.PlayerName.Username == username)
+        //        .AnyAsync())
+        //    {
+        //        return BadRequest();
+        //    }
 
-            Score playerScore = new Score
-            {
-                GameType = dbContext
-                .GameTypes
-                .FirstOrDefault(t => t.GameName == gameType),
-                ScoreCount = score,
-                PlayerName = new Player
-                {
-                    Username = username,
-                }
-            };
+        //    Score playerScore = new Score
+        //    {
+        //        GameType = dbContext
+        //        .GameTypes
+        //        .FirstOrDefault(t => t.GameName == gameType),
+        //        ScoreCount = score,
+        //        Time = DateTime.Now,
+        //        PlayerName = new Player
+        //        {
+        //            Username = username,
+        //        }
+        //    };
 
-            await dbContext.Scores.AddAsync(playerScore);
-            await dbContext.SaveChangesAsync();
+        //    await dbContext.Scores.AddAsync(playerScore);
+        //    await dbContext.SaveChangesAsync();
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         //Получение первых пяти лучших результатов в зависимости от типа игры
+
         [HttpGet]
         [Route("{gameType}")]
         public async Task<IActionResult> GetScore(string gameType)
@@ -70,11 +72,18 @@ namespace WolfBack.Controllers
                 .OrderByDescending(s => s.ScoreCount)
                 .Select(s => new
                 {
-                    score = s.ScoreCount,
-                    name = s.PlayerName.Username
+                    Score = s.ScoreCount,
+                    Name = s.PlayerName.Username,
+                    s.PlayerName.VKId,
+                    s.Time
                 })
-                .Take(5);
+                .Take(10);
             return Json(result);
         }
+
+        //public IActionResult Range(DateTime firstDate, DateTime lastDate)
+        //{
+            
+        //}
     }
 }
