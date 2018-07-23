@@ -131,8 +131,8 @@ namespace WolfBack.Controllers
                 .Where(t => t.State == GameState.Selected)
                 .Select(t => new
                 {
-                    t.GameName,
-                    t.GameTypeId,
+                    Name = t.GameName,
+                    GameId = t.GameTypeId,
 #if DEBUG
                     State = t.State.ToString()
 #endif

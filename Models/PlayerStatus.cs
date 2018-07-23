@@ -6,8 +6,8 @@ namespace Models
 {
     public enum PlayerStatus
     {
-        InGame,
+        Free,
         InQueue,
-        Free
+        InGame
     }
 }
