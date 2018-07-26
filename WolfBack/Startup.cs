@@ -53,11 +53,9 @@ namespace WolfBack
                     .AllowAnyOrigin()
                     .AllowCredentials());
             app.UseMvc();
-            app.UseSignalR(routes => 
-                routes.MapHub<ChatHub>("/chathub")
+            app.UseSignalR(routes =>
+                routes.MapHub<ChatHub>("/hub")
             );
         }
-
-
     }
 }

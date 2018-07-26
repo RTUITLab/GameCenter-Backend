@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Models;
 using Models.Requests;
+using WolfBack.SignalR;
 
 namespace WolfBack.Controllers
 {
@@ -14,10 +16,12 @@ namespace WolfBack.Controllers
     public class GameTypeController : Controller
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IHubContext<ChatHub> hubContext;
 
-        public GameTypeController(ApplicationDbContext dbContext)
+        public GameTypeController(ApplicationDbContext dbContext, IHubContext<ChatHub> hubContext)
         {
             this.dbContext = dbContext;
+            this.hubContext = hubContext;
         }
 
         //Добавление нового типа игры в таблицу
@@ -38,6 +42,7 @@ namespace WolfBack.Controllers
 
             await dbContext.GameTypes.AddAsync(type);
             await dbContext.SaveChangesAsync();
+            await hubContext.Clients.All.SendAsync("Add", gameType);
 
             return Ok();
         }
@@ -69,6 +74,7 @@ namespace WolfBack.Controllers
             var del = dbContext.GameTypes.FirstOrDefault(t => t.GameName == gameType);
             dbContext.GameTypes.Remove(del);
             await dbContext.SaveChangesAsync();
+            await hubContext.Clients.All.SendAsync("Delete", gameType);
             return Ok();
         }
 
@@ -90,6 +96,7 @@ namespace WolfBack.Controllers
             }
 
             await dbContext.SaveChangesAsync();
+            await hubContext.Clients.All.SendAsync("Rename", editRequest.GameName);
             return Ok();
         }
 
@@ -104,6 +111,7 @@ namespace WolfBack.Controllers
                 result.State = GameState.Selected;
                 await dbContext.SaveChangesAsync();
             }
+            await hubContext.Clients.All.SendAsync("Pick", pickRequest);
             return Ok();
         }
 
@@ -118,6 +126,7 @@ namespace WolfBack.Controllers
                 result.State = GameState.NotSelected;
                 await dbContext.SaveChangesAsync();
             }
+            await hubContext.Clients.All.SendAsync("Pick", unpickRequest);
             return Ok();
         }
 

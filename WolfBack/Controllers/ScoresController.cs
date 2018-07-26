@@ -74,8 +74,7 @@ namespace WolfBack.Controllers
                 {
                     Score = s.ScoreCount,
                     Name = s.PlayerName.Username,
-                    s.PlayerName.VKId,
-                    s.Time
+                    s.PlayerName.VKId
                 })
                 .Take(10);
             return Json(result);

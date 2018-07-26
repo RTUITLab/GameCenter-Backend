@@ -4,8 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Models;
 using Models.ModelViews;
+using WolfBack.Services.Interfaces;
+using WolfBack.SignalR;
 
 namespace WolfBack.Controllers
 {
@@ -14,10 +17,14 @@ namespace WolfBack.Controllers
     public class VKBotController : Controller
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IHubContext<ChatHub> hubContext;
+        private readonly IQueueService queue;
 
-        public VKBotController(ApplicationDbContext dbContext)
+        public VKBotController(ApplicationDbContext dbContext, IHubContext<ChatHub> hubContext, IQueueService queue)
         {
             this.dbContext = dbContext;
+            this.hubContext = hubContext;
+            this.queue = queue;
         }
 
         [HttpPost]
@@ -36,6 +43,7 @@ namespace WolfBack.Controllers
                     PlayerName = player
                 };
                 await dbContext.AddAsync(score);
+                queue.PutInQueue(score.PlayerId);
             }
             else
             {
@@ -52,21 +60,27 @@ namespace WolfBack.Controllers
                     }
                 };
                 await dbContext.AddAsync(score);
+                queue.PutInQueue(score.PlayerId);
             }
             await dbContext.SaveChangesAsync();
+            await hubContext
+                .Clients
+                .All
+                .SendAsync("New", createRequest.GameName, createRequest.VKId, createRequest.Username);
             return Ok();
         }
 
-    //    [HttpGet]
-    //    public IActionResult Get(string playerName)
-    //    {
-    //        var result = dbContext
-    //            .Players
-    //            .Where(p => p.Username == playerName)
-    //            .Select(p => p.Scores)
-    //            .ToList();
+        //    [HttpGet]
+        //    public IActionResult Get(string playerName)
+        //    {
+        //        var result = dbContext
+        //            .Players
+        //            .Where(p => p.Username == playerName)
+        //            .Select(p => p.Scores)
+        //            .ToList();
 
-    //        return Json(result);
-    //    }
-    //}
+        //        return Json(result);
+        //    }
+        //}
+    }
 }
