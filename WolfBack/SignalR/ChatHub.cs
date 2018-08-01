@@ -8,9 +8,5 @@ namespace WolfBack.SignalR
 {
     public class ChatHub : Hub
     {
-        //public async Task Pick(string message)
-        //{
-        //    await Clients.All.SendAsync("Pick", message);
-        //}
     }
 }
