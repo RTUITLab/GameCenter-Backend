@@ -10,28 +10,33 @@ namespace WolfBack.Services
 {
     public class QueueService : IQueueService
     {
-        public ConcurrentQueue<Score> queue = new ConcurrentQueue<Score>();
+
         public List<Score> list = new List<Score>();
         public void PutInQueue(Score player)
         {
-            queue.Enqueue(player);
+            list.Add(player);
         }
-        public List<Score> GetFromQueue(int count)
+
+        public void DeletePlayer(Score player)
         {
-            for (int i = 0; i < count; i++)
-            {
-                queue.TryDequeue(out Score result);
-                list.Add(result);
-            }
+            list.RemoveAll(p => p.PlayerName.Username == player.PlayerName.Username);
+        }
+
+        public void DeletePlayers(GameType player)
+        {
+            list.RemoveAll(p => p.GameTypeId == player.GameTypeId);
+        }
+        public List<Score> GetQueue(int count)
+        {
             return list;
         }
-        public Score FindInQueue(Score player)
+        public Score FindInQueue(string player)
         {
-            return queue.FirstOrDefault(id => id.PlayerId == player.PlayerId);
+            return list.FirstOrDefault(id => id.PlayerName.Username == player);
         }
         public int GetCount()
         {
-            return queue.Count;
+            return list.Count;
         }
     }
 }

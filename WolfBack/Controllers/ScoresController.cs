@@ -40,9 +40,8 @@ namespace WolfBack.Controllers
                 .OrderByDescending(s => s.ScoreCount)
                 .Select(s => new
                 {
-                    Score = s.ScoreCount,
                     Name = s.PlayerName.Username,
-                    s.PlayerName.VKId
+                    Score = s.ScoreCount
                 })
                 .Take(3);
             return Json(result);

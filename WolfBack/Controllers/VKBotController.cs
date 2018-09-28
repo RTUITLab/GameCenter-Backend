@@ -71,7 +71,7 @@ namespace WolfBack.Controllers
             await hubContext
                 .Clients
                 .All
-                .SendAsync("New", new { createRequest.Username, createRequest.GameName });
+                .SendAsync("Accept", new { createRequest.Username, createRequest.GameName });
             return Ok();
         }
 
@@ -79,15 +79,15 @@ namespace WolfBack.Controllers
         [Route("getqueue")]
         public IActionResult GetQueue()
         {
-            return Json(queue.GetFromQueue(queue.GetCount())
+            return Json(queue.GetQueue(queue.GetCount())
                 .Select(s => new
                 {
                     s.GameType.GameName,
                     s.PlayerName.Username,
-                    Status = s.PlayerName.Status.ToString()
+                    Status = s.PlayerName.Status.ToString(),
+                    s.PlayerId
                 }));
         }
-
 
         [HttpGet]
         [Route("getgames")]
