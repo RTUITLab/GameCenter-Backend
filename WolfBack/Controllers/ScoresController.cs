@@ -23,38 +23,6 @@ namespace WolfBack.Controllers
             this.dbContext = dbContext;
         }
 
-        //Добавление нового игрока в таблицу
-        //[HttpPost]
-        //[Route("{username}/{gameType}/{score}")]
-        //public async Task<IActionResult> PostScore(string username, int score, string gameType)
-        //{
-        //    if (await dbContext.Scores
-        //        .Where(s => s.GameType.GameName == gameType)
-        //        .Where(s => s.PlayerName.Username == username)
-        //        .AnyAsync())
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    Score playerScore = new Score
-        //    {
-        //        GameType = dbContext
-        //        .GameTypes
-        //        .FirstOrDefault(t => t.GameName == gameType),
-        //        ScoreCount = score,
-        //        Time = DateTime.Now,
-        //        PlayerName = new Player
-        //        {
-        //            Username = username,
-        //        }
-        //    };
-
-        //    await dbContext.Scores.AddAsync(playerScore);
-        //    await dbContext.SaveChangesAsync();
-
-        //    return Ok();
-        //}
-
         //Получение первых пяти лучших результатов в зависимости от типа игры
 
         [HttpGet]
@@ -76,13 +44,17 @@ namespace WolfBack.Controllers
                     Name = s.PlayerName.Username,
                     s.PlayerName.VKId
                 })
-                .Take(10);
+                .Take(3);
             return Json(result);
         }
 
-        //public IActionResult Range(DateTime firstDate, DateTime lastDate)
-        //{
-            
-        //}
+        [HttpGet]
+        [Route("getmyscores/{VkId}")]
+        public IActionResult GetMyScores(string VkId)
+        {
+            return Json(dbContext
+                .Players
+                .FirstOrDefault(u => u.VKId == VkId).Scores);
+        }
     }
 }

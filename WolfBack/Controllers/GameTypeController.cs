@@ -85,7 +85,7 @@ namespace WolfBack.Controllers
         {
             if (!dbContext.GameTypes.Any(t => t.GameName == gameType))
             {
-                NotFound();
+                return NotFound();
             }
 
             var result = dbContext.GameTypes.FirstOrDefault(t => t.GameName == gameType);
@@ -108,6 +108,10 @@ namespace WolfBack.Controllers
             foreach (var gameID in pickRequest)
             {
                 var result = await dbContext.GameTypes.FindAsync(gameID);
+                if (result.State == GameState.Selected)
+                {
+                    return BadRequest();
+                }
                 result.State = GameState.Selected;
                 await dbContext.SaveChangesAsync();
             }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +11,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Models;
+using Newtonsoft.Json;
+using WolfBack.Services;
+using WolfBack.Services.Interfaces;
+using WolfBack.Settings;
 using WolfBack.SignalR;
 
 namespace WolfBack
@@ -35,9 +42,39 @@ namespace WolfBack
                 options.UseSqlServer(Configuration.GetConnectionString("WolfDB"),
                 b => b.MigrationsAssembly("WolfBack")));
 #endif
+
+            services.Configure<DefaultAdmin>(Configuration.GetSection(nameof(DefaultAdmin)));
+
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("JwtOptions")["Key"]));
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+              .AddJwtBearer(options =>
+              {
+                  options.RequireHttpsMetadata = false;
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuer = true,
+                      ValidIssuer = Configuration.GetSection("JwtOptions")["Issuer"],
+
+                      ValidateAudience = true,
+                      ValidAudience = Configuration.GetSection("JwtOptions")["Audience"],
+
+                      ValidateLifetime = true,
+
+                      IssuerSigningKey = key,
+
+                      ValidateIssuerSigningKey = true
+                  };
+              });
+            services.AddAuthentication();
             services.AddCors();
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); ;
             services.AddSignalR();
+            services.AddSingleton<IKeyService, KeyService>();
+            services.AddSingleton<IQueueService, QueueService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,10 +89,12 @@ namespace WolfBack
                     .AllowAnyMethod()
                     .AllowAnyOrigin()
                     .AllowCredentials());
+            app.UseAuthentication();
             app.UseMvc();
             app.UseSignalR(routes =>
                 routes.MapHub<ChatHub>("/hub")
             );
         }
+
     }
 }

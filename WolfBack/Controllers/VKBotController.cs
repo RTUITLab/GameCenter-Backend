@@ -34,16 +34,21 @@ namespace WolfBack.Controllers
             if (dbContext.Players.FirstOrDefault(p => p.VKId == createRequest.VKId) != null)
             {
                 var player = dbContext.Players.FirstOrDefault(p => p.VKId == createRequest.VKId);
-                player.Status = PlayerStatus.InQueue;
+
                 Score score = new Score()
                 {
                     GameType = dbContext.GameTypes.FirstOrDefault(t => t.GameName == createRequest.GameName),
                     ScoreCount = default,
                     Time = DateTime.Now,
-                    PlayerName = player
+                    PlayerName = new Player
+                    {
+                        Username = createRequest.Username,
+                        Status = PlayerStatus.InQueue,
+                        VKId = player.VKId
+                    }
                 };
                 await dbContext.AddAsync(score);
-                queue.PutInQueue(score.PlayerId);
+                queue.PutInQueue(score);
             }
             else
             {
@@ -60,27 +65,40 @@ namespace WolfBack.Controllers
                     }
                 };
                 await dbContext.AddAsync(score);
-                queue.PutInQueue(score.PlayerId);
+                queue.PutInQueue(score);
             }
             await dbContext.SaveChangesAsync();
             await hubContext
                 .Clients
                 .All
-                .SendAsync("New", createRequest.GameName, createRequest.VKId, createRequest.Username);
+                .SendAsync("New", new { createRequest.Username, createRequest.GameName });
             return Ok();
         }
 
-        //    [HttpGet]
-        //    public IActionResult Get(string playerName)
-        //    {
-        //        var result = dbContext
-        //            .Players
-        //            .Where(p => p.Username == playerName)
-        //            .Select(p => p.Scores)
-        //            .ToList();
+        [HttpGet]
+        [Route("getqueue")]
+        public IActionResult GetQueue()
+        {
+            return Json(queue.GetFromQueue(queue.GetCount())
+                .Select(s => new
+                {
+                    s.GameType.GameName,
+                    s.PlayerName.Username,
+                    Status = s.PlayerName.Status.ToString()
+                }));
+        }
 
-        //        return Json(result);
-        //    }
-        //}
+
+        [HttpGet]
+        [Route("getgames")]
+        public IActionResult GetSelectedGames()
+        {
+            return Json(dbContext
+                .GameTypes
+                .Where(t => t.State == GameState.Selected)
+                .Select(n => n.GameName)
+                .ToList());
+
+        }
     }
 }
