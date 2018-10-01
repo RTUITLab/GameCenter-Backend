@@ -42,14 +42,13 @@ namespace WolfBack.Controllers
                 {
                     Name = s.PlayerName.Username,
                     Score = s.ScoreCount,
-                    s.GameTypeId
-                })
-                .Take(3);
+                    Date = s.Time
+                });
             return Json(result);
         }
 
         [HttpGet]
-        public IActionResult GetScores()
+        public IActionResult GetTopScores()
         {
             var result = dbContext
                 .GameTypes
@@ -60,6 +59,18 @@ namespace WolfBack.Controllers
             return Json(result);
         }
 
+        [HttpGet]
+        [Route("last")]
+        public IActionResult GetLastScores()
+        {
+            var result = dbContext
+                .GameTypes
+                .Where(s => s.State == GameState.Selected)
+                .Select(s => s.Scores.OrderByDescending(b => b.ScoreCount).Select(n => new { n.GameType.GameName, n.PlayerName.Username, n.ScoreCount }).TakeLast(5))
+                .ToList();
+
+            return Json(result);
+        }
 
         [HttpGet]
         [Route("getmyscores/{VkId}")]
