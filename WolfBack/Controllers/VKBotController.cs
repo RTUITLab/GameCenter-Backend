@@ -47,7 +47,9 @@ namespace WolfBack.Controllers
                         VKId = player.VKId
                     }
                 };
+                
                 await dbContext.AddAsync(score);
+                await dbContext.SaveChangesAsync();
                 queue.PutInQueue(score);
             }
             else
@@ -65,9 +67,10 @@ namespace WolfBack.Controllers
                     }
                 };
                 await dbContext.AddAsync(score);
+                await dbContext.SaveChangesAsync();
                 queue.PutInQueue(score);
             }
-            await dbContext.SaveChangesAsync();
+           
             await hubContext
                 .Clients
                 .All
@@ -83,6 +86,7 @@ namespace WolfBack.Controllers
                 .Select(s => new
                 {
                     s.GameType.GameName,
+                    s.GameTypeId,
                     s.PlayerName.Username,
                     Status = s.PlayerName.Status.ToString(),
                     s.PlayerId

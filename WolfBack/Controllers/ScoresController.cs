@@ -26,26 +26,40 @@ namespace WolfBack.Controllers
         //Получение первых пяти лучших результатов в зависимости от типа игры
 
         [HttpGet]
-        [Route("{gameType}")]
-        public async Task<IActionResult> GetScore(string gameType)
+        [Route("{gameId}")]
+        public async Task<IActionResult> GetScore(Guid gameId)
         {
-            if (!await dbContext.GameTypes.AnyAsync(t => t.GameName == gameType))
+            if (!await dbContext.GameTypes.AnyAsync(t => t.GameTypeId == gameId))
             {
                 return BadRequest();
             }
 
             var result = dbContext
                 .Scores
-                .Where(type => type.GameType.GameName == gameType)
+                .Where(type => type.GameTypeId == gameId)
                 .OrderByDescending(s => s.ScoreCount)
                 .Select(s => new
                 {
                     Name = s.PlayerName.Username,
-                    Score = s.ScoreCount
+                    Score = s.ScoreCount,
+                    s.GameTypeId
                 })
                 .Take(3);
             return Json(result);
         }
+
+        [HttpGet]
+        public IActionResult GetScores()
+        {
+            var result = dbContext
+                .GameTypes
+                .Where(s => s.State == GameState.Selected)
+                .Select(s => s.Scores.OrderByDescending(b => b.ScoreCount).Select(n => new { n.GameType.GameName, n.PlayerName.Username, n.ScoreCount }).Take(3))
+                .ToList();
+
+            return Json(result);
+        }
+
 
         [HttpGet]
         [Route("getmyscores/{VkId}")]

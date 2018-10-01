@@ -29,29 +29,31 @@ namespace WolfBack.Controllers
         }
 
         [HttpPut]
-        [Route("accept/{username}")]
-        public async Task<IActionResult> AcceptPlayer(string username)
+        [Route("accept/{userId}")]
+        public async Task<IActionResult> AcceptPlayer(Guid userId)
         {
-            var res = dbContext.Players.FirstOrDefault(t => t.Username == username);
+            var res = dbContext.Players.FirstOrDefault(t => t.PlayerId == userId);
             res.Status = PlayerStatus.InGame;
-            queue.FindInQueue(username).PlayerName.Status = PlayerStatus.InGame;
+            queue.FindInQueue(userId).PlayerName.Status = PlayerStatus.InGame;
             await dbContext.SaveChangesAsync();
 
-            await hubContext.Clients.All.SendAsync("Accept", username, res.Status.ToString());
+            await hubContext.Clients.All.SendAsync("Accept", userId, res.Status.ToString());
 
             return Ok();
         }
 
         [HttpPut]
-        [Route("refuse/{username}/{score}")]
-        public async Task<IActionResult> RefusePlayer(string username, int score)
+        [Route("refuse/{userId}/{gameId}/{score}")]
+        public async Task<IActionResult> RefusePlayer(Guid userId, Guid gameId, int score)
         {
-            var res = dbContext.Players.FirstOrDefault(t => t.Username == username);
+            var res = dbContext.Players.FirstOrDefault(t => t.PlayerId == userId);
+            var game = dbContext.Scores.FirstOrDefault(u => u.GameType.GameTypeId == gameId && u.PlayerId == userId);
             res.Status = PlayerStatus.Free;
-            queue.DeletePlayer(dbContext.Scores.FirstOrDefault(s => s.PlayerName.Username == username));
+            game.ScoreCount = score;
+            queue.DeletePlayer(dbContext.Scores.FirstOrDefault(s => s.PlayerId == userId));
             await dbContext.SaveChangesAsync();
 
-            await hubContext.Clients.All.SendAsync("Accept", username);
+            await hubContext.Clients.All.SendAsync("Accept", userId);
 
             return Ok();
         }

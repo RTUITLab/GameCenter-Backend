@@ -12,7 +12,7 @@ namespace WolfBack.Services.Interfaces
         void DeletePlayer(Score player);
         void DeletePlayers(GameType player);
         List<Score> GetQueue(int count);
-        Score FindInQueue(string Player);
+        Score FindInQueue(Guid Player);
         int GetCount();
     }
 }

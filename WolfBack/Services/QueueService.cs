@@ -30,9 +30,9 @@ namespace WolfBack.Services
         {
             return list;
         }
-        public Score FindInQueue(string player)
+        public Score FindInQueue(Guid player)
         {
-            return list.FirstOrDefault(id => id.PlayerName.Username == player);
+            return list.FirstOrDefault(id => id.PlayerId == player);
         }
         public int GetCount()
         {
