@@ -47,10 +47,15 @@ namespace WolfBack.Controllers
                         VKId = player.VKId
                     }
                 };
-                
+
                 await dbContext.AddAsync(score);
                 await dbContext.SaveChangesAsync();
                 queue.PutInQueue(score);
+                await hubContext
+                .Clients
+                .All
+                .SendAsync("Accept", new { createRequest.Username, createRequest.GameName });
+                return Json(score.PlayerId);
             }
             else
             {
@@ -69,13 +74,12 @@ namespace WolfBack.Controllers
                 await dbContext.AddAsync(score);
                 await dbContext.SaveChangesAsync();
                 queue.PutInQueue(score);
-            }
-           
-            await hubContext
+                await hubContext
                 .Clients
                 .All
                 .SendAsync("Accept", new { createRequest.Username, createRequest.GameName });
-            return Ok();
+                return Json(score.PlayerId);
+            }
         }
 
         [HttpGet]
@@ -100,9 +104,16 @@ namespace WolfBack.Controllers
             return Json(dbContext
                 .GameTypes
                 .Where(t => t.State == GameState.Selected)
-                .Select(n => n.GameName)
-                .ToList());
+                .Select(n => new { n.GameName, n.GameTypeId })
+                );
+        }
 
+        [HttpGet]
+        [Route("getmyscores/{playerId}")]
+        public IActionResult GetMyScores(Guid playerId)
+        {
+            var res = dbContext.Scores.Where(s => s.PlayerId == playerId).OrderByDescending(c => c.ScoreCount).Select(u => new { u.GameType.GameName, u.ScoreCount }).Take(5);
+            return Json(res);
         }
     }
 }

@@ -43,7 +43,8 @@ namespace WolfBack.Controllers
                     Name = s.PlayerName.Username,
                     Score = s.ScoreCount,
                     Date = s.Time
-                });
+                })
+                .Take(5);
             return Json(result);
         }
 
