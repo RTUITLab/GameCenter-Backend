@@ -42,9 +42,9 @@ namespace WolfBack.Controllers
                 {
                     Name = s.PlayerName.Username,
                     Score = s.ScoreCount,
-                    Date = s.Time
-                })
-                .Take(5);
+                    Date = s.Time,
+                    s.ScoreId
+                });
             return Json(result);
         }
 
@@ -80,6 +80,26 @@ namespace WolfBack.Controllers
             return Json(dbContext
                 .Players
                 .FirstOrDefault(u => u.VKId == VkId).Scores);
+        }
+
+        [HttpDelete]
+        [Route("delete_all/{gameTypeId}")]
+        public async Task<IActionResult> DeleteAll(Guid gameTypeId)
+        {
+            var scores = dbContext.Scores.Where(id => id.GameTypeId == gameTypeId);
+            dbContext.Scores.RemoveRange(scores);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("delete/{scoreId}")]
+        public async Task<IActionResult> Delete(Guid scoreId)
+        {
+            var score = dbContext.Scores.FirstOrDefault(s => s.ScoreId == scoreId);
+            dbContext.Scores.Remove(score);
+            await dbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }
