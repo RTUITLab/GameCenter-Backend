@@ -81,7 +81,7 @@ namespace WolfBack.Controllers
                 .Clients
                 .All
                 .SendAsync("Accept", new { createRequest.Username, createRequest.GameName });
-                return Json(score.PlayerId);
+                return Json(new { mesage = "Вы добавлены в очередь", score.PlayerId });
             }
         }
 
