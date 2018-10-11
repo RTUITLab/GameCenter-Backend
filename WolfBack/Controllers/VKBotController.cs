@@ -34,18 +34,15 @@ namespace WolfBack.Controllers
             if (dbContext.Players.FirstOrDefault(p => p.VKId == createRequest.VKId) != null)
             {
                 var player = dbContext.Players.FirstOrDefault(p => p.VKId == createRequest.VKId);
+                player.Status = PlayerStatus.InQueue;
+                player.Username = createRequest.Username;
 
                 Score score = new Score()
                 {
                     GameType = dbContext.GameTypes.FirstOrDefault(t => t.GameName == createRequest.GameName),
                     ScoreCount = default,
                     Time = DateTime.Now,
-                    PlayerName = new Player
-                    {
-                        Username = createRequest.Username,
-                        Status = PlayerStatus.InQueue,
-                        VKId = player.VKId
-                    }
+                    PlayerName = player
                 };
 
                 await dbContext.AddAsync(score);
