@@ -31,8 +31,14 @@ namespace WolfBack.Controllers
         [Route("addplayer")]
         public async Task<IActionResult> CreatePlayer([FromBody]PlayerCreate createRequest)
         {
+            if (!dbContext.GameTypes.Any(t => t.GameName == createRequest.GameName))
+            {
+                return BadRequest("Wrong GameType");
+
+            }
             if (dbContext.Players.FirstOrDefault(p => p.VKId == createRequest.VKId) != null)
             {
+                var GameType = dbContext.GameTypes.FirstOrDefault(t => t.GameName == createRequest.GameName);
                 var player = dbContext.Players.FirstOrDefault(p => p.VKId == createRequest.VKId);
                 player.Status = PlayerStatus.InQueue;
                 player.Username = createRequest.Username;

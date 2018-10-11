@@ -1,10 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WolfBack.Migrations
 {
-    public partial class forst : Migration
+    public partial class First : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,12 +11,13 @@ namespace WolfBack.Migrations
                 name: "GameTypes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    GameName = table.Column<string>(nullable: true)
+                    GameTypeId = table.Column<Guid>(nullable: false),
+                    GameName = table.Column<string>(nullable: true),
+                    State = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GameTypes", x => x.Id);
+                    table.PrimaryKey("PK_GameTypes", x => x.GameTypeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -25,7 +25,9 @@ namespace WolfBack.Migrations
                 columns: table => new
                 {
                     PlayerId = table.Column<Guid>(nullable: false),
-                    Username = table.Column<string>(nullable: true)
+                    Username = table.Column<string>(nullable: true),
+                    VKId = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -36,26 +38,27 @@ namespace WolfBack.Migrations
                 name: "Scores",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    GameTypeId = table.Column<Guid>(nullable: true),
-                    PlayerNamePlayerId = table.Column<Guid>(nullable: true),
-                    ScoreCount = table.Column<int>(nullable: false)
+                    ScoreId = table.Column<Guid>(nullable: false),
+                    PlayerId = table.Column<Guid>(nullable: false),
+                    GameTypeId = table.Column<Guid>(nullable: false),
+                    ScoreCount = table.Column<int>(nullable: false),
+                    Time = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Scores", x => x.Id);
+                    table.PrimaryKey("PK_Scores", x => x.ScoreId);
                     table.ForeignKey(
                         name: "FK_Scores_GameTypes_GameTypeId",
                         column: x => x.GameTypeId,
                         principalTable: "GameTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "GameTypeId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Scores_Players_PlayerNamePlayerId",
-                        column: x => x.PlayerNamePlayerId,
+                        name: "FK_Scores_Players_PlayerId",
+                        column: x => x.PlayerId,
                         principalTable: "Players",
                         principalColumn: "PlayerId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -64,9 +67,9 @@ namespace WolfBack.Migrations
                 column: "GameTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Scores_PlayerNamePlayerId",
+                name: "IX_Scores_PlayerId",
                 table: "Scores",
-                column: "PlayerNamePlayerId");
+                column: "PlayerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
