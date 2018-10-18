@@ -14,13 +14,13 @@ namespace WolfBack.Controllers
 {
     [Produces("application/json")]
     [Route("api/VkBot")]
-    public class VKBotController : Controller
+    public class RegistrationController : Controller
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IHubContext<ChatHub> hubContext;
         private readonly IQueueService queue;
 
-        public VKBotController(ApplicationDbContext dbContext, IHubContext<ChatHub> hubContext, IQueueService queue)
+        public RegistrationController(ApplicationDbContext dbContext, IHubContext<ChatHub> hubContext, IQueueService queue)
         {
             this.dbContext = dbContext;
             this.hubContext = hubContext;

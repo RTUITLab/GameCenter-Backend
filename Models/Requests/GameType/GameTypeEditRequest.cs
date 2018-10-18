@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Models.Requests
 {
-    public class GameTypeCreate
+    public class GameTypeEditRequest
     {
-        public string GameType { get; set; }
+        public string GameName { get; set; }
     }
 }

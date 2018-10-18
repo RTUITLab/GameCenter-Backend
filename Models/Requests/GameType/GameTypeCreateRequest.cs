@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Models.Requests
 {
-    public class GameTypeDelete
+    public class GameTypeCreateRequest
     {
         public string GameType { get; set; }
     }

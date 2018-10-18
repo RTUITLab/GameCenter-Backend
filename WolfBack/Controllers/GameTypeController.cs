@@ -27,22 +27,22 @@ namespace WolfBack.Controllers
         //Добавление нового типа игры в таблицу
         [HttpPost]
         [Route("{gameType}")]
-        public async Task<IActionResult> PostGameType(string gameType)
+        public async Task<IActionResult> PostGameType([FromBody] GameTypeCreateRequest request)
         {
-            if (dbContext.GameTypes.Any(g => g.GameName == gameType))
+            if (dbContext.GameTypes.Any(g => g.GameName == request.GameType))
             {
                 return BadRequest();
             }
 
-            GameType type = new GameType
+            GameType game = new GameType
             {
-                GameName = gameType,
+                GameName = request.GameType,
                 State = GameState.NotSelected
             };
 
-            await dbContext.GameTypes.AddAsync(type);
+            await dbContext.GameTypes.AddAsync(game);
             await dbContext.SaveChangesAsync();
-            await hubContext.Clients.All.SendAsync("Add", gameType);
+            await hubContext.Clients.All.SendAsync("Add", game);
 
             return Ok();
         }
@@ -64,39 +64,39 @@ namespace WolfBack.Controllers
         //Удаление игры
         [HttpDelete]
         [Route("delete/{gameType}")]
-        public async Task<IActionResult> DeleteGame(string gameType)
+        public async Task<IActionResult> DeleteGame([FromBody] IdRequest request)
         {
-            if (!dbContext.GameTypes.Any(t => t.GameName == gameType))
+            if (!dbContext.GameTypes.Any(t => t.GameTypeId == request.Id))
             {
                 return NotFound();
             }
 
-            var del = dbContext.GameTypes.FirstOrDefault(t => t.GameName == gameType);
+            var del = await dbContext.GameTypes.FindAsync(request.Id);
             dbContext.GameTypes.Remove(del);
             await dbContext.SaveChangesAsync();
-            await hubContext.Clients.All.SendAsync("Delete", gameType);
+            await hubContext.Clients.All.SendAsync("Delete", del.GameName);
             return Ok();
         }
 
         //Переименование игр
         [HttpPut]
-        [Route("rename/{gameType}")]
-        public async Task<IActionResult> Rename(string gameType, [FromBody]GameTypeEdit editRequest)
+        [Route("rename/{gameTypeId}")]
+        public async Task<IActionResult> Rename(Guid gameTypeId, [FromBody]GameTypeEditRequest request)
         {
-            if (!dbContext.GameTypes.Any(t => t.GameName == gameType))
+            if (!dbContext.GameTypes.Any(t => t.GameTypeId == gameTypeId))
             {
                 return NotFound();
             }
 
-            var result = dbContext.GameTypes.FirstOrDefault(t => t.GameName == gameType);
+            var result = await dbContext.GameTypes.FindAsync(gameTypeId);
 
-            if (editRequest.GameName != null)
+            if (request.GameName != null)
             {
-                result.GameName = editRequest.GameName;
+                result.GameName = request.GameName;
             }
 
             await dbContext.SaveChangesAsync();
-            await hubContext.Clients.All.SendAsync("Rename", editRequest.GameName);
+            await hubContext.Clients.All.SendAsync("Rename", request.GameName);
             return Ok();
         }
 
