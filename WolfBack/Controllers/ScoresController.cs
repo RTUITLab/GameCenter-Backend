@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Models;
 using Models.Requests;
 using Models.Responces.Scores;
+using WolfBack.SignalR;
 
 namespace WolfBack.Controllers
 {
@@ -13,10 +15,12 @@ namespace WolfBack.Controllers
     public class ScoresController : Controller
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IHubContext<ChatHub> hubContext;
 
-        public ScoresController(ApplicationDbContext dbContext)
+        public ScoresController(ApplicationDbContext dbContext, IHubContext<ChatHub> hubContext)
         {
             this.dbContext = dbContext;
+            this.hubContext = hubContext;
         }
 
         [HttpGet]
@@ -88,6 +92,7 @@ namespace WolfBack.Controllers
             var scores = dbContext.Scores.Where(id => id.GameTypeId == gameId);
             dbContext.Scores.RemoveRange(scores);
             await dbContext.SaveChangesAsync();
+            await hubContext.Clients.All.SendAsync("DeleteRecord", gameId);
             return Ok();
         }
 
@@ -98,6 +103,7 @@ namespace WolfBack.Controllers
             var score = dbContext.Scores.FirstOrDefault(s => s.ScoreId == playerId);
             dbContext.Scores.Remove(score);
             await dbContext.SaveChangesAsync();
+            await hubContext.Clients.All.SendAsync("DeleteRecord", score.PlayerId);
             return Ok();
         }
     }

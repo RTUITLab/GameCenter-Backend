@@ -48,7 +48,7 @@ namespace WolfBack.Controllers
         }
 
         [HttpPut]
-        [Route("refuse/{userId}/{gameId}/{score}")]
+        [Route("refuse/{playerId}/{gameId}/{score}")]
         public async Task<IActionResult> RefusePlayer(Guid playerId, Guid gameId, int score)
         {
             var player = dbContext.Players.FirstOrDefault(t => t.PlayerId == playerId);

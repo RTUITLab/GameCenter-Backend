@@ -43,7 +43,7 @@ namespace WolfBack.Controllers
 
             await dbContext.GameTypes.AddAsync(game);
             await dbContext.SaveChangesAsync();
-            await hubContext.Clients.All.SendAsync("Add", game);
+            await hubContext.Clients.All.SendAsync("Add", game.GameName);
 
             return Ok();
         }
