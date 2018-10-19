@@ -26,7 +26,6 @@ namespace WolfBack.Migrations
                 {
                     PlayerId = table.Column<Guid>(nullable: false),
                     Username = table.Column<string>(nullable: true),
-                    VKId = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -69,7 +68,8 @@ namespace WolfBack.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Scores_PlayerId",
                 table: "Scores",
-                column: "PlayerId");
+                column: "PlayerId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

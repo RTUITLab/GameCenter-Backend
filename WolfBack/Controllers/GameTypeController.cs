@@ -19,7 +19,7 @@ namespace WolfBack.Controllers
         private readonly IHubContext<ChatHub> hubContext;
 
         public GameTypeController(
-            ApplicationDbContext dbContext, 
+            ApplicationDbContext dbContext,
             IHubContext<ChatHub> hubContext)
         {
             this.dbContext = dbContext;
@@ -50,6 +50,7 @@ namespace WolfBack.Controllers
 
         //Получение всех типов игр, хранящихся в таблице 
         [HttpGet]
+        [Route("getall")]
         public IActionResult GetAllTypes()
         {
             return Json(dbContext

@@ -10,14 +10,14 @@ using Models;
 namespace WolfBack.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181011162644_First")]
-    partial class First
+    [Migration("20181019163712_Second")]
+    partial class Second
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -44,8 +44,6 @@ namespace WolfBack.Migrations
 
                     b.Property<string>("Username");
 
-                    b.Property<string>("VKId");
-
                     b.HasKey("PlayerId");
 
                     b.ToTable("Players");
@@ -68,7 +66,8 @@ namespace WolfBack.Migrations
 
                     b.HasIndex("GameTypeId");
 
-                    b.HasIndex("PlayerId");
+                    b.HasIndex("PlayerId")
+                        .IsUnique();
 
                     b.ToTable("Scores");
                 });
@@ -80,9 +79,9 @@ namespace WolfBack.Migrations
                         .HasForeignKey("GameTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Models.Player", "PlayerName")
-                        .WithMany("Scores")
-                        .HasForeignKey("PlayerId")
+                    b.HasOne("Models.Player", "Player")
+                        .WithOne("Score")
+                        .HasForeignKey("Models.Score", "PlayerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

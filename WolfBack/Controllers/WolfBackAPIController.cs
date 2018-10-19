@@ -50,6 +50,11 @@ namespace WolfBack.Controllers
         [Route("game/{gameName}")]
         public IActionResult GetGameId(string gameName)
         {
+            if (!dbContext.GameTypes.Any(n => n.GameName == gameName))
+            {
+                return BadRequest("Игра не найдена");
+
+            }
             return Json(dbContext
                 .GameTypes
                 .Where(g => g.GameName == gameName)
