@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Models;
 using Models.Requests;
 using WolfBack.SignalR;
+using Models.Responces;
 
 namespace WolfBack.Controllers
 {
@@ -18,7 +18,9 @@ namespace WolfBack.Controllers
         private readonly ApplicationDbContext dbContext;
         private readonly IHubContext<ChatHub> hubContext;
 
-        public GameTypeController(ApplicationDbContext dbContext, IHubContext<ChatHub> hubContext)
+        public GameTypeController(
+            ApplicationDbContext dbContext, 
+            IHubContext<ChatHub> hubContext)
         {
             this.dbContext = dbContext;
             this.hubContext = hubContext;
@@ -26,7 +28,6 @@ namespace WolfBack.Controllers
 
         //Добавление нового типа игры в таблицу
         [HttpPost]
-        [Route("{gameType}")]
         public async Task<IActionResult> PostGameType([FromBody] GameTypeCreateRequest request)
         {
             if (dbContext.GameTypes.Any(g => g.GameName == request.GameType))
@@ -51,48 +52,47 @@ namespace WolfBack.Controllers
         [HttpGet]
         public IActionResult GetAllTypes()
         {
-            var result = dbContext.GameTypes.Select(t => new
+            return Json(dbContext
+                .GameTypes
+                .Select(t => new GameTypeResponse()
             {
-                Name = t.GameName,
                 GameId = t.GameTypeId,
-                State = t.State.ToString()
-            });
-
-            return Json(result);
+                GameName = t.GameName
+            }));
         }
 
         //Удаление игры
         [HttpDelete]
-        [Route("delete/{gameType}")]
-        public async Task<IActionResult> DeleteGame([FromBody] IdRequest request)
+        [Route("delete/{gameId}")]
+        public async Task<IActionResult> DeleteGame(Guid gameId)
         {
-            if (!dbContext.GameTypes.Any(t => t.GameTypeId == request.Id))
+            if (!dbContext.GameTypes.Any(t => t.GameTypeId == gameId))
             {
                 return NotFound();
             }
 
-            var del = await dbContext.GameTypes.FindAsync(request.Id);
-            dbContext.GameTypes.Remove(del);
+            var game = await dbContext.GameTypes.FindAsync(gameId);
+            dbContext.GameTypes.Remove(game);
             await dbContext.SaveChangesAsync();
-            await hubContext.Clients.All.SendAsync("Delete", del.GameName);
+            await hubContext.Clients.All.SendAsync("Delete", game.GameName);
             return Ok();
         }
 
         //Переименование игр
         [HttpPut]
-        [Route("rename/{gameTypeId}")]
-        public async Task<IActionResult> Rename(Guid gameTypeId, [FromBody]GameTypeEditRequest request)
+        [Route("rename")]
+        public async Task<IActionResult> Rename([FromBody]GameTypeEditRequest request)
         {
-            if (!dbContext.GameTypes.Any(t => t.GameTypeId == gameTypeId))
+            if (!dbContext.GameTypes.Any(t => t.GameTypeId == request.GameId))
             {
-                return NotFound();
+                return NotFound("Игра не найдена");
             }
 
-            var result = await dbContext.GameTypes.FindAsync(gameTypeId);
+            var game = await dbContext.GameTypes.FindAsync(request.GameId);
 
             if (request.GameName != null)
             {
-                result.GameName = request.GameName;
+                game.GameName = request.GameName;
             }
 
             await dbContext.SaveChangesAsync();
@@ -102,35 +102,33 @@ namespace WolfBack.Controllers
 
         //Выбор показываемых на стендах игр
         [HttpPut]
-        [Route("pickgames")]
-        public async Task<IActionResult> PickGame([FromBody]List<Guid> pickRequest)
+        [Route("pickgame")]
+        public async Task<IActionResult> PickGame([FromBody] IdRequest request)
         {
-            foreach (var gameID in pickRequest)
+            var game = await dbContext.GameTypes.FindAsync(request.Id);
+
+            if (game.State == GameState.Selected)
             {
-                var result = await dbContext.GameTypes.FindAsync(gameID);
-                if (result.State == GameState.Selected)
-                {
-                    return BadRequest();
-                }
-                result.State = GameState.Selected;
-                await dbContext.SaveChangesAsync();
+                return BadRequest("Игра уже выбрана");
             }
-            await hubContext.Clients.All.SendAsync("Pick", pickRequest);
+
+            game.State = GameState.Selected;
+
+            await dbContext.SaveChangesAsync();
+            await hubContext.Clients.All.SendAsync("Pick", request.Id);
             return Ok();
         }
 
         //Отмена выбора показывавемых на стендах игр
         [HttpPut]
-        [Route("unpickgames")]
-        public async Task<IActionResult> UnpickGames([FromBody]List<Guid> unpickRequest)
+        [Route("unpickgame")]
+        public async Task<IActionResult> UnpickGames([FromBody] IdRequest request)
         {
-            foreach (var gameID in unpickRequest)
-            {
-                var result = await dbContext.GameTypes.FindAsync(gameID);
-                result.State = GameState.NotSelected;
-                await dbContext.SaveChangesAsync();
-            }
-            await hubContext.Clients.All.SendAsync("Pick", unpickRequest);
+            var game = await dbContext.GameTypes.FindAsync(request.Id);
+            game.State = GameState.NotSelected;
+
+            await dbContext.SaveChangesAsync();
+            await hubContext.Clients.All.SendAsync("Pick", request);
             return Ok();
         }
 
@@ -142,13 +140,10 @@ namespace WolfBack.Controllers
             return Json(dbContext
                 .GameTypes
                 .Where(t => t.State == GameState.Selected)
-                .Select(t => new
+                .Select(t => new GameTypeResponse()
                 {
-                    Name = t.GameName,
                     GameId = t.GameTypeId,
-#if DEBUG
-                    State = t.State.ToString()
-#endif
+                    GameName = t.GameName
                 }));
         }
     }

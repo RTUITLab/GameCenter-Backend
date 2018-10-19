@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using WolfBack.Services.Interfaces;
 using Models;
 
@@ -10,29 +8,31 @@ namespace WolfBack.Services
 {
     public class QueueService : IQueueService
     {
+        public List<Player> list = new List<Player>();
 
-        public List<Score> list = new List<Score>();
-        public void PutInQueue(Score player)
+        public void PutInQueue(Player player)
         {
             list.Add(player);
         }
-
-        public void DeletePlayer(Score player)
+        public void DeletePlayer(Guid playerId)
         {
-            list.RemoveAll(p => p.PlayerName.Username == player.PlayerName.Username);
+            list.RemoveAll(p => p.PlayerId == playerId);
         }
-
-        public void DeletePlayers(GameType player)
+        public void DeletePlayers(Guid gameId)
         {
-            list.RemoveAll(p => p.GameTypeId == player.GameTypeId);
+            list.RemoveAll(p => p.Score.GameTypeId == gameId);
         }
-        public List<Score> GetQueue(int count)
+        public List<Player> GetQueue(int count)
         {
             return list;
         }
-        public Score FindInQueue(Guid player)
+        public Player FindInQueue(Guid player)
         {
             return list.FirstOrDefault(id => id.PlayerId == player);
+        }
+        public Player GetFirstInGameQueue(Guid gameId)
+        {
+            return list.FirstOrDefault(id => id.Score.GameTypeId == gameId);
         }
         public int GetCount()
         {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Models
 {
@@ -7,8 +6,7 @@ namespace Models
     {
         public Guid PlayerId { get; set; }
         public string Username { get; set; }
-        public string VKId { get; set; }
-        public List<Score> Scores { get; set; }
+        public Score Score { get; set; }
         public PlayerStatus Status { get; set; }
     }
 }

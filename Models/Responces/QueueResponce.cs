@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Models.Requests
+namespace Models.Responces
 {
-    public class GameTypeEditRequest
+    public class QueueResponce
     {
         public Guid GameId { get; set; }
+        public Guid PlayerId { get; set; }
         public string GameName { get; set; }
+        public string UserName { get; set; }
     }
 }

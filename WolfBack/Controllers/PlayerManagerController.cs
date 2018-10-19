@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Models;
+using Models.Requests;
 using WolfBack.Services.Interfaces;
 using WolfBack.SignalR;
 
@@ -29,41 +30,44 @@ namespace WolfBack.Controllers
         }
 
         [HttpPut]
-        [Route("accept/{userId}")]
-        public async Task<IActionResult> AcceptPlayer(Guid userId)
+        [Route("accept")]
+        public async Task<IActionResult> AcceptPlayer([FromBody] IdRequest request)
         {
-            var res = dbContext.Players.FirstOrDefault(t => t.PlayerId == userId);
-            res.Status = PlayerStatus.InGame;
-            queue.FindInQueue(userId).PlayerName.Status = PlayerStatus.InGame;
+            if (await dbContext.Players.FindAsync(request.Id) == null)
+            {
+                return BadRequest("игрок не найден");
+            }
+
+            var player = dbContext.Players.FirstOrDefault(t => t.PlayerId == request.Id);
+            player.Status = PlayerStatus.InGame;
+            queue.FindInQueue(request.Id).Status = PlayerStatus.InGame;
+
             await dbContext.SaveChangesAsync();
-
-            await hubContext.Clients.All.SendAsync("Accept", userId, res.Status.ToString());
-
+            await hubContext.Clients.All.SendAsync("Accept", request.Id, player.Status.ToString());
             return Ok();
         }
 
         [HttpPut]
         [Route("refuse/{userId}/{gameId}/{score}")]
-        public async Task<IActionResult> RefusePlayer(Guid userId, Guid gameId, int score)
+        public async Task<IActionResult> RefusePlayer(Guid playerId, Guid gameId, int score)
         {
-            var res = dbContext.Players.FirstOrDefault(t => t.PlayerId == userId);
-            var game = dbContext.Scores.FirstOrDefault(u => u.GameType.GameTypeId == gameId && u.PlayerId == userId);
-            res.Status = PlayerStatus.Free;
+            var player = dbContext.Players.FirstOrDefault(t => t.PlayerId == playerId);
+            var game = dbContext.Scores.FirstOrDefault(u => u.GameType.GameTypeId == gameId && u.PlayerId == playerId);
+
+            player.Status = PlayerStatus.Free;
             game.ScoreCount = score;
-            queue.DeletePlayer(dbContext.Scores.FirstOrDefault(s => s.PlayerId == userId));
+            queue.DeletePlayer(playerId);
+
             await dbContext.SaveChangesAsync();
-
-            await hubContext.Clients.All.SendAsync("Accept", userId);
-
+            await hubContext.Clients.All.SendAsync("Accept", playerId);
             return Ok();
         }
 
-        [HttpPut]
+        [HttpDelete]
         [Route("deleteall/{gameId}")]
         public async Task<IActionResult> DeleteAll(Guid gameId)
         {
-            var res = await dbContext.GameTypes.FindAsync(gameId);
-            queue.DeletePlayers(res);
+            queue.DeletePlayers(gameId);
             await hubContext.Clients.All.SendAsync("Accept", gameId);
             return Ok();
         }

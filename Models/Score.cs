@@ -9,7 +9,7 @@ namespace Models
         public Guid ScoreId { get; set; }
         public Guid PlayerId { get; set; }
         public Guid GameTypeId { get; set; }
-        public Player PlayerName { get; set; }
+        public Player Player { get; set; }
         public GameType GameType { get; set; }
         public int ScoreCount { get; set; }
         public DateTime Time { get; set; }

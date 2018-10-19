@@ -8,11 +8,12 @@ namespace WolfBack.Services.Interfaces
 {
     public interface IQueueService
     {
-        void PutInQueue(Score player);
-        void DeletePlayer(Score player);
-        void DeletePlayers(GameType player);
-        List<Score> GetQueue(int count);
-        Score FindInQueue(Guid Player);
+        void PutInQueue(Player player);
+        void DeletePlayer(Guid playerId);
+        void DeletePlayers(Guid gameId);
+        List<Player> GetQueue(int count);
+        Player FindInQueue(Guid playerId);
+        Player GetFirstInGameQueue(Guid gameId);
         int GetCount();
     }
 }
