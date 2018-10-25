@@ -56,10 +56,10 @@ namespace WolfBack.Controllers
             return Json(dbContext
                 .GameTypes
                 .Select(t => new GameTypeResponse()
-            {
-                GameId = t.GameTypeId,
-                GameName = t.GameName
-            }));
+                {
+                    GameId = t.GameTypeId,
+                    GameName = t.GameName
+                }));
         }
 
         //Удаление игры
