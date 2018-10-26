@@ -71,7 +71,8 @@ namespace WolfBack.Controllers
                     GameId = s.Score.GameTypeId,
                     PlayerId = s.PlayerId,
                     UserName = s.Username,
-                    GameName = s.Score.GameType.GameName
+                    GameName = s.Score.GameType.GameName,
+                    Status = s.Status.ToString()
                 }));
         }
     }
