@@ -13,6 +13,5 @@ namespace WolfBackAPI
         /// WolfBackAPI/game/ + gamename
         /// </summary>
         public static readonly string GetGameId = "WolfBackAPI/game/";
-        public static readonly string GetPlayerId = "WolfBackAPI/player";
     }
 }
