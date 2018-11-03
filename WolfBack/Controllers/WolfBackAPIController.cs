@@ -34,8 +34,9 @@ namespace WolfBack.Controllers
         public async Task<IActionResult> PostScore([FromBody] ScorePostRequest request)
         {
             var player = queue.GetFirstInGameQueue(request.GameId);
-
+            var dbPlayer = dbContext.Players.FindAsync(player.PlayerId);
             player.Score.ScoreCount = request.Score;
+            player.Status = PlayerStatus.Free;
             queue.DeletePlayer(player.PlayerId);
 
             await dbContext.SaveChangesAsync();

@@ -75,6 +75,7 @@ namespace WolfBack
             services.AddSignalR();
             services.AddSingleton<IKeyService, KeyService>();
             services.AddSingleton<IQueueService, QueueService>();
+            services.AddSpaStaticFiles(config => config.RootPath = "wwwroot");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,7 +95,8 @@ namespace WolfBack
             app.UseSignalR(routes =>
                 routes.MapHub<ChatHub>("/hub")
             );
+            app.UseSpaStaticFiles();
+            app.UseSpa(spa => { });
         }
-
     }
 }
