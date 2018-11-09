@@ -34,8 +34,10 @@
 
   <ItemGroup>
     <None Include="wwwroot\assets\icons\accept_user.svg" />
+    <None Include="wwwroot\assets\icons\add-circular-button.svg" />
     <None Include="wwwroot\assets\icons\Bronze_medal.svg" />
-    <None Include="wwwroot\assets\icons\decline_user.svg" />
+    <None Include="wwwroot\assets\icons\close-circular-button.svg" />
+    <None Include="wwwroot\assets\icons\gamepad.svg" />
     <None Include="wwwroot\assets\icons\Gold_medal.svg" />
     <None Include="wwwroot\assets\icons\menu.svg" />
     <None Include="wwwroot\assets\icons\Silver_medal.svg" />
