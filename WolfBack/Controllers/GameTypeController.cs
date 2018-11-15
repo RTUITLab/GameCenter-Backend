@@ -8,6 +8,7 @@ using Models;
 using Models.Requests;
 using WolfBack.SignalR;
 using Models.Responces;
+using Microsoft.AspNetCore.Http;
 
 namespace WolfBack.Controllers
 {
@@ -38,7 +39,8 @@ namespace WolfBack.Controllers
             GameType game = new GameType
             {
                 GameName = request.GameType,
-                State = GameState.NotSelected
+                State = GameState.NotSelected,
+                ImageURL = request.ImageURL
             };
 
             await dbContext.GameTypes.AddAsync(game);
@@ -104,7 +106,7 @@ namespace WolfBack.Controllers
         //Выбор показываемых на стендах игр
         [HttpPut]
         [Route("pickgame")]
-        public async Task<IActionResult> PickGame([FromBody] IdRequest request)
+        public async Task<IActionResult> PickGame([FromBody]IdRequest request)
         {
             var game = await dbContext.GameTypes.FindAsync(request.Id);
 
@@ -123,7 +125,7 @@ namespace WolfBack.Controllers
         //Отмена выбора показывавемых на стендах игр
         [HttpPut]
         [Route("unpickgame")]
-        public async Task<IActionResult> UnpickGames([FromBody] IdRequest request)
+        public async Task<IActionResult> UnpickGames([FromBody]IdRequest request)
         {
             var game = await dbContext.GameTypes.FindAsync(request.Id);
             game.State = GameState.NotSelected;
@@ -144,7 +146,8 @@ namespace WolfBack.Controllers
                 .Select(t => new GameTypeResponse()
                 {
                     GameId = t.GameTypeId,
-                    GameName = t.GameName
+                    GameName = t.GameName,
+                    ImageURL = t.ImageURL
                 }));
         }
     }

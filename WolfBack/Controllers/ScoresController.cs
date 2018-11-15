@@ -56,13 +56,13 @@ namespace WolfBack.Controllers
                 .Select(s => s
                     .Scores
                     .OrderByDescending(b => b.ScoreCount)
-                        .Select(n => new TopScoreResponce()
-                        {
-                            UserName = n.Player.Username,
-                            GameName = n.GameType.GameName,
-                            Score = n.ScoreCount
-                        })
-                        .Take(3))
+                    .Select(n => new TopScoreResponce()
+                    {
+                        UserName = n.Player.Username,
+                        GameName = n.GameType.GameName,
+                        Score = n.ScoreCount,
+                    })
+                .Take(3))
                 .ToList());
         }
 

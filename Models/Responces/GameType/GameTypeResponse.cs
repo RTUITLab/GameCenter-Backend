@@ -8,5 +8,6 @@ namespace Models.Responces
     {
         public Guid GameId { get; set; }
         public string GameName { get; set; }
+        public string ImageURL { get; set; }
     }
 }
