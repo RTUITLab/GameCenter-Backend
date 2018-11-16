@@ -48,7 +48,7 @@ namespace WolfBack.Controllers
                 {
                     GameType = game,
                     ScoreCount = default,
-                    Time = DateTime.Now
+                    Date = DateTime.Now
                 },
                 Status = PlayerStatus.InQueue
             };

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models;
 
 namespace WolfBack.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181116154411_date")]
+    partial class date
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,13 +56,13 @@ namespace WolfBack.Migrations
                     b.Property<Guid>("ScoreId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("Date");
-
                     b.Property<Guid>("GameTypeId");
 
                     b.Property<Guid>("PlayerId");
 
                     b.Property<int>("ScoreCount");
+
+                    b.Property<string>("Time");
 
                     b.HasKey("ScoreId");
 

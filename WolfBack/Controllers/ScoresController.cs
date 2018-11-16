@@ -42,7 +42,7 @@ namespace WolfBack.Controllers
                     UserName = s.Player.Username,
                     GameName = s.GameType.GameName,
                     Score = s.ScoreCount,
-                    Date = DateTime.Now
+                    Date = s.Date.ToString("dd.MM.yyyy")
                 }));
         }
 
@@ -62,7 +62,7 @@ namespace WolfBack.Controllers
                         GameName = n.GameType.GameName,
                         Score = n.ScoreCount,
                     })
-                .Take(3))
+                .Take(5))
                 .ToList());
         }
 
@@ -105,6 +105,28 @@ namespace WolfBack.Controllers
             await dbContext.SaveChangesAsync();
             await hubContext.Clients.All.SendAsync("DeleteRecord", score.PlayerId);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("sort/{gameTypeId}/{nowDate}/{endDate}")]
+        public IActionResult SortByDate(Guid gameTypeId, DateTime nowDate, DateTime endDate)
+        {
+            if (nowDate >= endDate && dbContext.GameTypes.Find(gameTypeId) == null)
+            {
+                return BadRequest("Неверно заданы параметры");
+            }
+
+            return Json(dbContext
+                .Scores
+                .Where(s => s.Date >= nowDate && s.Date <= endDate && s.GameTypeId == gameTypeId)
+                .Select(s => new ScoreResponce
+                {
+                    ScoreId = s.ScoreId,
+                    UserName = s.Player.Username,
+                    GameName = s.GameType.GameName,
+                    Score = s.ScoreCount,
+                    Date = s.Date.ToString("dd.MM.yyyy")
+                }));
         }
     }
 }

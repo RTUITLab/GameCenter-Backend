@@ -10,6 +10,6 @@ namespace Models.Responces.Scores
         public string UserName { get; set; }
         public string GameName { get; set; }
         public int Score { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
     }
 }
