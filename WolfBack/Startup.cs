@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Models;
 using Newtonsoft.Json;
+using WolfBack.Formatting;
 using WolfBack.Services;
 using WolfBack.Services.Interfaces;
 using WolfBack.Settings;
@@ -69,6 +72,7 @@ namespace WolfBack
                       ValidateIssuerSigningKey = true
                   };
               });
+            services.AddAutoMapper();
             services.AddAuthentication();
             services.AddCors();
             services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); ;

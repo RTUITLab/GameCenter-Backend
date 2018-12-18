@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using WolfBack.Services.Interfaces;
 using WolfBack.SignalR;
@@ -46,20 +48,19 @@ namespace WolfBack.Controllers
 
         [HttpGet]
         [Route("game/{gameName}")]
-        public IActionResult GetGameId(string gameName)
+        public async Task<IActionResult> GetGameIdAsync(string gameName)
         {
-            if (!dbContext.GameTypes.Any(n => n.GameName == gameName))
+            var targetGame = await dbContext
+                .GameTypes
+                .Where(n => n.GameName == gameName)
+                .ProjectTo<GetGameIdResponce>()
+                .SingleOrDefaultAsync();
+
+            if (targetGame == null)
             {
                 return BadRequest("Игра не найдена");
-
             }
-            return Json(dbContext
-                .GameTypes
-                .Where(g => g.GameName == gameName)
-                .Select(s => new GetGameIdResponce()
-                {
-                    GameId = s.GameTypeId
-                }));
+            return Json(targetGame);
         }
     }
 }
