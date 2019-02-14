@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 /WolfBack/appsettings.secret.json
+
+wwwroot/

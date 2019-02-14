@@ -10,13 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Exceptions\**" />
-    <Content Remove="Exceptions\**" />
-    <EmbeddedResource Remove="Exceptions\**" />
-    <None Remove="Exceptions\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
@@ -27,18 +20,6 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
-    <!--<DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.1" />-->
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\assets\icons\accept_user.svg" />
-    <None Include="wwwroot\assets\icons\add-circular-button.svg" />
-    <None Include="wwwroot\assets\icons\Bronze_medal.svg" />
-    <None Include="wwwroot\assets\icons\close-circular-button.svg" />
-    <None Include="wwwroot\assets\icons\gamepad.svg" />
-    <None Include="wwwroot\assets\icons\Gold_medal.svg" />
-    <None Include="wwwroot\assets\icons\menu.svg" />
-    <None Include="wwwroot\assets\icons\Silver_medal.svg" />
   </ItemGroup>
 
   <ItemGroup>

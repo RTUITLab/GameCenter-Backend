@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28606.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WolfBack", "WolfBack\WolfBack.csproj", "{6A484A65-2AC8-4A72-8363-EB443946379D}"
 EndProject
@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{A1931E42-3399-457A-AD21-181E10C1FDA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WolfBackAPI", "WolfBackAPI\WolfBackAPI.csproj", "{69A75700-A965-4D77-AC05-0D733B748DAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WolfBackAPI", "WolfBackAPI\WolfBackAPI.csproj", "{69A75700-A965-4D77-AC05-0D733B748DAC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ADF0C9F4-CC99-4EFA-B22C-9B1377F148CF}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
