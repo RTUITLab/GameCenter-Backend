@@ -36,15 +36,8 @@ namespace WolfBack
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-#if DEBUG     
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("LocalDB"),
-                b => b.MigrationsAssembly("WolfBack")));
-#else
-             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("WolfDB"),
-                b => b.MigrationsAssembly("WolfBack")));
-#endif
+
+            ConfigureDataBase(services);
 
             services.Configure<DefaultAdmin>(Configuration.GetSection(nameof(DefaultAdmin)));
 
@@ -101,6 +94,30 @@ namespace WolfBack
             );
             app.UseSpaStaticFiles();
             app.UseSpa(spa => { });
+        }
+
+        private void ConfigureDataBase(IServiceCollection services)
+        {
+            var dbType = Configuration.GetValue<string>("DB_TYPE");
+
+            switch (dbType)
+            {
+                case "LOCAL_DB":
+                    services.AddDbContext<ApplicationDbContext>(options =>
+                        options.UseSqlServer(Configuration.GetConnectionString("LocalDB"),
+                        b => b.MigrationsAssembly(nameof(WolfBack))));
+                    break;
+                case "SQL_SERVER_REMOTE":
+                    services.AddDbContext<ApplicationDbContext>(options =>
+                        options.UseSqlServer(Configuration.GetConnectionString("SQL_SERVER_REMOTE"),
+                        b => b.MigrationsAssembly(nameof(WolfBack))));
+                    break;
+                case "IN_MEMORY":
+                    services.AddDbContext<ApplicationDbContext>(options =>
+                        options.UseInMemoryDatabase("IN_MEMORY"));
+                    break;
+                default: throw new ArgumentException("No key for database");
+            }
         }
     }
 }
